@@ -51,7 +51,7 @@ void write_default_param_file() {
 	
 	delay_ms(3000);
 
-#if 0
+#if 1
 	/* serial number default */
 	config.serial_prefix='A';
 	config.serial_number=0;
