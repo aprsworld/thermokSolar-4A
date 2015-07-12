@@ -51,6 +51,7 @@ void write_default_param_file() {
 	
 	delay_ms(3000);
 
+#if 0
 	/* serial number default */
 	config.serial_prefix='A';
 	config.serial_number=0;
@@ -106,6 +107,63 @@ void write_default_param_file() {
 
 	/* type of virtual relay */
 	config.relay_c_type=RELAY_C_TYPE_DISABLED;
+#else
+	/* serial number default */
+	config.serial_prefix='A';
+	config.serial_number=0;
+
+	/* revision */
+	config.revision='a';
+
+	/* serial port baud rate */
+	config.rs232_baud=BAUD_9600;
+
+	/* first relay */
+	config.relay_mode[0]=RELAY_MODE_OFF; 
+	config.differential_a_channel[0]=0;
+	config.differential_b_channel[0]=3;
+	config.differential_delta_temperatureC[0]=11;
+	config.differential_high_temperatureC[0]=85;
+	config.over_temp_channel_mask[0]=0b1111;
+	config.over_temp_temperatureC[0]=95;
+	config.under_temp_channel_mask[0]=0b1111;
+	config.under_temp_temperatureC[0]=5;
+
+	/* second relay */
+	config.relay_mode[1]=RELAY_MODE_OFF;
+	config.differential_a_channel[1]=1;
+	config.differential_b_channel[1]=3;
+	config.differential_delta_temperatureC[1]=11;
+	config.differential_high_temperatureC[1]=85;
+	config.over_temp_channel_mask[1]=0b1111;
+	config.over_temp_temperatureC[1]=85;
+	config.under_temp_channel_mask[1]=0b1111;
+	config.under_temp_temperatureC[1]=5;
+
+	/* third relay, TriStar */
+	config.relay_mode[2]=RELAY_MODE_ALARM_OVER;
+	config.differential_a_channel[2]=1;
+	config.differential_b_channel[2]=3;
+	config.differential_delta_temperatureC[2]=11;
+	config.differential_high_temperatureC[2]=24;
+	config.over_temp_channel_mask[2]=0b0001;
+	config.over_temp_temperatureC[2]=24;
+	config.under_temp_channel_mask[2]=0b0001;
+	config.under_temp_temperatureC[2]=5;
+
+
+	/* should we log when on battery power */
+	config.log_on_battery=0;
+
+	/* default to degrees F */
+	config.units=UNITS_F;
+
+	/* scaling of 0 to 5 volt sensor input */
+	config.sensor_type=SENSOR_THERMISTOR_NTC;
+
+	/* type of virtual relay */
+	config.relay_c_type=RELAY_C_TYPE_TRISTAR;
+#endif
 
 	/* write them so next time we use from EEPROM */
 	write_param_file();

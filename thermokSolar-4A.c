@@ -235,6 +235,7 @@ void relay_on(int8 ch) {
 	} else {
 		if ( config.relay_c_type==RELAY_C_TYPE_TRISTAR ) {
 			modbus_tristar_disable(1);
+			delay_ms(10);
 			modbus_tristar_enable(2);
 		}
 		current.relay_status_c=1;
@@ -251,6 +252,7 @@ void relay_off(int8 ch) {
 	} else {
 		if ( config.relay_c_type==RELAY_C_TYPE_TRISTAR ) {
 			modbus_tristar_enable(1);
+			delay_ms(10);
 			modbus_tristar_disable(2);
 		}
 		current.relay_status_c=0;
