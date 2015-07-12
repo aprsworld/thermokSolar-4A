@@ -148,44 +148,67 @@ void init_rs232(void) {
 	output_high(RS232_EN);
 }
 
-void modbus_tristar_disable(void) {
+void modbus_tristar_disable(int8 ch) {
 	setup_uart(9600,modem);
 	output_high(RS232_EN);
 	output_high(MODEM_EN);
 
 	/* disable output
-	01,05,00,01,FF,00,DD,FA
+	01,05,00,01,FF,00,DD,FA (slave address=1)
+	02,05,00,01,FF,00,DD,C9 (slave address=2)
 	*/
-	fputc(0x01,modem);
+	if ( 2 == ch ) {
+		fputc(0x02,modem);
+	} else { 
+		fputc(0x01,modem);
+	}
 	fputc(0x05,modem);
 	fputc(0x00,modem);
 	fputc(0x01,modem);
 	fputc(0xFF,modem);
 	fputc(0x00,modem);
+
+	/* CRC */
 	fputc(0xDD,modem);
-	fputc(0xFA,modem);
+	if ( 2 == ch ) {
+		fputc(0xC9,modem);
+	} else {
+		fputc(0xFA,modem);
+	}
 
 	/* return to defined speed */
 	init_rs232();
 }
 
-void modbus_tristar_enable(void) {
+void modbus_tristar_enable(int8 ch) {
 	setup_uart(9600,modem);
 	output_high(RS232_EN);
 	output_high(MODEM_EN);
 
 	/* enable output
-	01,05,00,01,00,00,9C,0A
+	01,05,00,01,00,00,9C,0A (slave address=1)
+	02,05,00,01,00,00,9C,39 (slave address=2)
 	*/
 
-	fputc(0x01,modem);
+	if ( 2 == ch ) {
+		fputc(0x02,modem);
+	} else {
+		fputc(0x01,modem);
+	}
+
 	fputc(0x05,modem);
 	fputc(0x00,modem);
 	fputc(0x01,modem);
 	fputc(0x00,modem);
 	fputc(0x00,modem);
+	
+	/* CRC */
 	fputc(0x9C,modem);
-	fputc(0x0A,modem);
+	if ( 2 == ch ) {
+		fputc(0x39,modem);
+	} else {
+		fputc(0x0A,modem);
+	}
 
 
 	/* return to defined speed */
@@ -210,8 +233,10 @@ void relay_on(int8 ch) {
 		output_high(RELAY_B);
 		current.relay_status_b=1;
 	} else {
-		if ( config.relay_c_type==RELAY_C_TYPE_TRISTAR )
-			modbus_tristar_disable();
+		if ( config.relay_c_type==RELAY_C_TYPE_TRISTAR ) {
+			modbus_tristar_disable(1);
+			modbus_tristar_enable(2);
+		}
 		current.relay_status_c=1;
 	}
 }
@@ -224,8 +249,10 @@ void relay_off(int8 ch) {
 		output_low(RELAY_B);
 		current.relay_status_b=0;
 	} else {
-		if ( config.relay_c_type==RELAY_C_TYPE_TRISTAR )
-			modbus_tristar_enable();
+		if ( config.relay_c_type==RELAY_C_TYPE_TRISTAR ) {
+			modbus_tristar_enable(1);
+			modbus_tristar_disable(2);
+		}
 		current.relay_status_c=0;
 	}
 }
